@@ -11,7 +11,7 @@ description = 'Mutant Detector Project'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)   // Puedes usar 17 también
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
