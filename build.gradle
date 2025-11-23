@@ -41,35 +41,25 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+// Tarea de tests
 tasks.test {
     useJUnitPlatform()
-    finalizedBy tasks.jacocoTestReport
+    finalizedBy tasks.jacocoTestReport  // cuando termine test, corre jacocoTestReport
 }
 
+// Config Jacoco
 jacoco {
     toolVersion = "0.8.11"
 }
 
-jacocoTestReport {
-    dependsOn tasks.test
+// Reporte Jacoco
+tasks.jacocoTestReport {
+    dependsOn tasks.test  // primero test, después reporte
+
     reports {
-        xml.required = true
-        html.required = true
-    }
-    // OPCIONAL: excluir clases innecesarias para mejorar el coverage
-    doFirst {
-        classDirectories.setFrom(
-                files(classDirectories.files.collect {
-                    fileTree(
-                            dir: it,
-                            exclude: [
-                                    '**/MutantApplication.class',
-                                    '**/config/**',
-                                    '**/*$*' // Clases internas generadas por Lombok
-                            ]
-                    )
-                })
-        )
+        xml.required.set(false)
+        csv.required.set(false)
+        html.required.set(true)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
 }
-
