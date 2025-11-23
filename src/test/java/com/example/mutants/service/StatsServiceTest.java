@@ -1,0 +1,46 @@
+package com.example.mutants.service;
+
+import com.example.mutants.dto.StatsResponse;
+import com.example.mutants.repository.DnaRecordRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class StatsServiceTest {
+
+    @Mock
+    private DnaRecordRepository repository;
+
+    @InjectMocks
+    private StatsService statsService;
+
+    @Test
+    void getStats_withHumansComputesRatio() {
+        when(repository.countByIsMutant(true)).thenReturn(40L);
+        when(repository.countByIsMutant(false)).thenReturn(100L);
+
+        StatsResponse stats = statsService.getStats();
+
+        assertEquals(40L, stats.getCount_mutant_dna());
+        assertEquals(100L, stats.getCount_human_dna());
+        assertEquals(0.4, stats.getRatio(), 0.0001);
+    }
+
+    @Test
+    void getStats_withZeroHumansReturnsZeroRatio() {
+        when(repository.countByIsMutant(true)).thenReturn(10L);
+        when(repository.countByIsMutant(false)).thenReturn(0L);
+
+        StatsResponse stats = statsService.getStats();
+
+        assertEquals(10L, stats.getCount_mutant_dna());
+        assertEquals(0L, stats.getCount_human_dna());
+        assertEquals(0.0, stats.getRatio(), 0.0001);
+    }
+}
