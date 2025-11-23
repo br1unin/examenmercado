@@ -26,4 +26,9 @@ public class DnaRecord {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    // Setter explícito para que funcione bien setIsMutant(...)
+    public void setIsMutant(boolean isMutant) {
+        this.isMutant = isMutant;
+    }
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.mutants.validation.ValidDnaSequence;
+import com.example.mutants.validation.ValidDnaSequence;
 
 @Data
 @NoArgsConstructor

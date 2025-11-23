@@ -5,6 +5,7 @@ import com.example.mutants.dto.DnaRequest;
 import com.example.mutants.dto.StatsResponse;
 import com.example.mutants.service.MutantService;
 import com.example.mutants.service.StatsService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +19,16 @@ public class MutantController {
 
     @PostMapping("/mutant")
     public ResponseEntity<Void> checkMutant(@Validated @RequestBody DnaRequest request) {
-        // TODO: llamar a mutantService.analyzeDna(...) y devolver 200/403
-        return ResponseEntity.ok().build();
+        boolean isMutant = mutantService.analyzeDna(request.getDna());
+
+        return isMutant
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/stats")
     public ResponseEntity<StatsResponse> getStats() {
-        // TODO: llamar a statsService.getStats() y devolver los datos
-        return ResponseEntity.ok(new StatsResponse(0, 0, 0.0));
+        StatsResponse stats = statsService.getStats();
+        return ResponseEntity.ok(stats);
     }
 }

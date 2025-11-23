@@ -12,7 +12,13 @@ public class StatsService {
     private final DnaRecordRepository repository;
 
     public StatsResponse getStats() {
-        // TODO: usar countByIsMutant(true/false) y calcular ratio
-        return new StatsResponse(0, 0, 0.0);
+        long countMutant = repository.countByIsMutant(true);
+        long countHuman = repository.countByIsMutant(false);
+
+        double ratio = (countHuman == 0)
+                ? 0.0
+                : (double) countMutant / countHuman;
+
+        return new StatsResponse(countMutant, countHuman, ratio);
     }
 }
