@@ -93,4 +93,38 @@ class MutantServiceTest {
         assertFalse(result);
         verify(repository).save(any(DnaRecord.class));
     }
+    @Test
+    void analyzeDna_handlesDuplicateHashCorrectly() {
+        String[] dna1 = {"ATGC", "CAGT", "TTAT", "AGAC"};
+        String[] dna2 = {"ATGC", "CAGT", "TTAT", "AGAC"}; // Mismo DNA
+
+        when(repository.findByDnaHash(anyString())).thenReturn(Optional.empty());
+        when(detector.isMutant(any())).thenReturn(false);
+
+        // Primera llamada
+        service.analyzeDna(dna1);
+
+        // Segunda llamada con mismo DNA debería usar caché
+        when(repository.findByDnaHash(anyString())).thenReturn(Optional.of(new DnaRecord()));
+        service.analyzeDna(dna2);
+
+        verify(repository, times(1)).save(any()); // Solo guarda una vez
+    }
+
+    @Test
+    void analyzeDna_handlesMultipleDifferentDnas() {
+        String[] dna1 = {"AAAA", "CCCC", "TTAT", "AGAC"};
+        String[] dna2 = {"TTTT", "GGGG", "ATAT", "CGCG"};
+
+        when(repository.findByDnaHash(anyString())).thenReturn(Optional.empty());
+        when(detector.isMutant(dna1)).thenReturn(true);
+        when(detector.isMutant(dna2)).thenReturn(true);
+
+        boolean result1 = service.analyzeDna(dna1);
+        boolean result2 = service.analyzeDna(dna2);
+
+        assertTrue(result1);
+        assertTrue(result2);
+        verify(repository, times(2)).save(any());
+    }
 }

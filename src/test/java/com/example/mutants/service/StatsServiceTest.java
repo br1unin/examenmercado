@@ -43,4 +43,51 @@ class StatsServiceTest {
         assertEquals(0L, stats.getCount_human_dna());
         assertEquals(0.0, stats.getRatio(), 0.0001);
     }
+    @Test
+    void getStats_withOnlyMutants() {
+        when(repository.countByIsMutant(true)).thenReturn(50L);
+        when(repository.countByIsMutant(false)).thenReturn(0L);
+
+        StatsResponse stats = statsService.getStats();
+
+        assertEquals(50L, stats.getCount_mutant_dna());
+        assertEquals(0L, stats.getCount_human_dna());
+        assertEquals(0.0, stats.getRatio());
+    }
+
+    @Test
+    void getStats_withEqualMutantsAndHumans() {
+        when(repository.countByIsMutant(true)).thenReturn(50L);
+        when(repository.countByIsMutant(false)).thenReturn(50L);
+
+        StatsResponse stats = statsService.getStats();
+
+        assertEquals(50L, stats.getCount_mutant_dna());
+        assertEquals(50L, stats.getCount_human_dna());
+        assertEquals(1.0, stats.getRatio(), 0.0001);
+    }
+
+    @Test
+    void getStats_withNoRecords() {
+        when(repository.countByIsMutant(true)).thenReturn(0L);
+        when(repository.countByIsMutant(false)).thenReturn(0L);
+
+        StatsResponse stats = statsService.getStats();
+
+        assertEquals(0L, stats.getCount_mutant_dna());
+        assertEquals(0L, stats.getCount_human_dna());
+        assertEquals(0.0, stats.getRatio());
+    }
+
+    @Test
+    void getStats_withMoreHumansThanMutants() {
+        when(repository.countByIsMutant(true)).thenReturn(25L);
+        when(repository.countByIsMutant(false)).thenReturn(75L);
+
+        StatsResponse stats = statsService.getStats();
+
+        assertEquals(25L, stats.getCount_mutant_dna());
+        assertEquals(75L, stats.getCount_human_dna());
+        assertEquals(0.333, stats.getRatio(), 0.01);
+    }
 }

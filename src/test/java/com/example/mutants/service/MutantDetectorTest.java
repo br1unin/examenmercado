@@ -133,4 +133,85 @@ class MutantDetectorTest {
         String[] dna = {};
         assertFalse(detector.isMutant(dna));
     }
+    @Test
+    void testMutantWithMultipleHorizontalSequences() {
+        String[] dna = {
+                "AAAAGG",
+                "CCCCTA",
+                "TTATGT",
+                "AGAAGG",
+                "CCTCTA",
+                "TCACTG"
+        };
+        assertTrue(detector.isMutant(dna));
+    }
+
+    @Test
+    void testMutantCombinedVerticalAndDiagonal() {
+        String[] dna = {
+                "ATGCGA",
+                "AAGTGC",
+                "TAATGT",
+                "AGTAGG",
+                "CCCCTA",
+                "TCACTG"
+        };
+        assertTrue(detector.isMutant(dna));
+    }
+
+    @Test
+    void testMutant4x4Matrix() {
+        String[] dna = {
+                "AAAA",
+                "CCCC",
+                "TTAT",
+                "AGAC"
+        };
+        assertTrue(detector.isMutant(dna));
+    }
+
+    @Test
+    void testMutantExactlyTwoSequences() {
+        String[] dna = {
+                "AAAAGG",
+                "CAGTGC",
+                "TTATGT",
+                "AGAAGG",
+                "CCCCTA",
+                "TCACTG"
+        };
+        assertTrue(detector.isMutant(dna)); // Tiene exactamente 2 secuencias
+    }
+
+    @Test
+    void testMutantLargeMatrix() {
+        String[] dna = new String[10];
+        for (int i = 0; i < 10; i++) {
+            dna[i] = "ATCGATCGAT";
+        }
+        assertTrue(detector.isMutant(dna));
+    }
+
+    @Test
+    void testInvalidDnaWithNullRow() {
+        String[] dna = {
+                "ATGC",
+                null,
+                "TTAT",
+                "AGAC"
+        };
+        assertFalse(detector.isMutant(dna));
+    }
+
+    @Test
+    void testInvalidDnaWithDifferentLengths() {
+        String[] dna = {
+                "ATGCGA",
+                "CAGT",
+                "TTATGT",
+                "AGAAGG"
+        };
+        assertFalse(detector.isMutant(dna));
+    }
+
 }
